@@ -10,7 +10,7 @@ setuptools.setup(
     author_email="slinkymanbyday@gmail.com",
     description="",
     long_description=LONG,
-    install_requires=['aiohttp', 'async_timeout'],
+    install_requires=['aiohttp'],
     long_description_content_type="text/markdown",
     url="https://github.com/slinkymanbyday/tracktry",
     packages=setuptools.find_packages(),
