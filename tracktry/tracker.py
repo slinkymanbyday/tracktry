@@ -33,7 +33,7 @@ class Tracking(object):
         """Get tracking information."""
         self._trackings = {}
         self._meta = {}
-        
+
         url = "{}/trackings/get".format(URL)
         try:
             async with async_timeout.timeout(8, loop=self._loop):
