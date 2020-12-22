@@ -23,6 +23,7 @@ class Tracking(object):
         self._session = session
         self.api_key = api_key
         self._trackings = {}
+        self._couriers = {}
         self._meta = {}
         self.headers = {
             'Tracktry-Api-Key': self.api_key,
@@ -114,10 +115,42 @@ class Tracking(object):
             _LOGGER.error('Error connecting to Tracktry, %s', error)
         return couriers
 
+    async def get_couriers(self, **kwargs):
+        """
+        Get a list of couriers.
+
+        Add any optional parameters as kwargs when calling the method.
+        """
+        url = "{}/carriers".format(URL)
+        couriers = {}
+        try:
+            async with async_timeout.timeout(8, loop=self._loop):
+                response = await self._session.get(url, headers=self.headers)
+                result = await response.json()
+                try:
+                    if response.status in GOOD_HTTP_CODES:
+                        self._couriers = result['data']
+                    else:
+                        _LOGGER.error("Error code %s - %s",
+                                      result['meta']['code'],
+                                      result['meta']['message'])
+                except (TypeError, KeyError) as error:
+                    _LOGGER.error('Error parsing data from Tracktry, %s',
+                                  error)
+        except (asyncio.TimeoutError,
+                aiohttp.ClientError, socket.gaierror) as error:
+            _LOGGER.error('Error connecting to Tracktry, %s', error)
+        return couriers
+
     @property
     def trackings(self):
         """Return all trackings."""
         return self._trackings
+
+    @property
+    def couriers(self):
+        """Return all trackings."""
+        return self._couriers
 
     @property
     def meta(self):
